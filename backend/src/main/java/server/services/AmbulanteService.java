@@ -95,16 +95,25 @@ public class AmbulanteService {
     }
 
     public List<ItemCatalogo> listarItensCatalogo(Long catalogoId) {
-        return itemCatalogoRepository.listarPorCatalogo(catalogoId);
+        Catalogo catalogo = catalogoRepository.buscarPorId(catalogoId)
+                .orElseThrow(() -> new IllegalArgumentException("Catálogo não encontrado."));
+
+        List<ItemCatalogo> itens = itemCatalogoRepository.listarPorCatalogo(catalogoId);
+        itens.forEach(catalogo::adicionarItem);
+        return catalogo.getItens();
     }
 
     public ItemCatalogo criarItemCatalogo(Long catalogoId, CriarItemDTO dto) {
+        Catalogo catalogo = catalogoRepository.buscarPorId(catalogoId)
+                .orElseThrow(() -> new IllegalArgumentException("Catálogo não encontrado."));
+
         ItemCatalogo item = new ItemCatalogo(
                 dto.nome(),
                 dto.preco(),
                 dto.dataPerecivel(),
                 dto.descricao()
         );
+        catalogo.adicionarItem(item);
         return itemCatalogoRepository.salvar(catalogoId, item);
     }
 
