@@ -28,6 +28,7 @@ import server.services.PontoVendaService;
 public class Main {
 
     public static void main(String[] args) {
+        final int PORT = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
         var clienteController = new ClienteController(
                 new ClienteService(new ClienteRepository())
         );
@@ -55,7 +56,7 @@ public class Main {
         Javalin app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson(mapper, false));
             config.bundledPlugins.enableCors(cors -> { cors.addRule(CorsPluginConfig.CorsRule::anyHost); });
-        }).start(7070);
+        }).start(PORT);
 
         app.get("/", ctx -> ctx.result("Servidor rodando"));
 
